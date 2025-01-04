@@ -114,7 +114,7 @@ public class PlayerMovement : MonoBehaviour
         if (animator != null)
         {
             animator.SetBool("isRunning", Mathf.Abs(moveInput) > 0.1f);
-            animator.SetBool("isIdle", Mathf.Abs(moveInput) <= 0.1f)
+            animator.SetBool("isIdle", Mathf.Abs(moveInput) <= 0.1f);
 
             // Flip the sprite based on movement direction
             if (moveInput < 0) spriteRenderer.flipX = true;
