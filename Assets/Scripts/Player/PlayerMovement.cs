@@ -22,10 +22,11 @@ public class PlayerMovement : MonoBehaviour
     private bool canDash = true;                              // Flag to control whether the player can dash again
     private bool isGrounded;                                  // Flag to check if the player is on the ground
     private bool isTouchingWall;                              // Flag to check if the player is touching a wall
+    private bool isMoving;
     
-    private SpriteRenderer spriteRenderer;                    // Reference to the SpriteRenderer for sprite flipping
-    private Rigidbody2D rb;                                   // Reference to the player's Rigidbody2D component
-    private Animator animator;                                // Reference to the Animator component to control animations
+    private SpriteRenderer spriteRenderer;               
+    private Rigidbody2D rb;     
+    private Animator animator;                               
 
 
     void Start()
@@ -46,6 +47,20 @@ public class PlayerMovement : MonoBehaviour
         // Check if touching wall
         isTouchingWall = CheckWallCollision();
 
+        if (isTouchingWall)
+        {
+            animator.SetBool("isIdle", false);
+            animator.SetBool("isRunning", false);
+            animator.SetBool("isJumping", false);
+            animator.SetBool("isFalling", false);
+            animator.SetBool("isDashing", false);
+            animator.SetBool("isTouchingWall", true);
+        }
+        else
+        {
+            animator.SetBool("isTouchingWall", false);
+        }
+
         // Get the horizontal input for movement
         float moveInput = Input.GetAxisRaw("Horizontal");
 
@@ -64,6 +79,19 @@ public class PlayerMovement : MonoBehaviour
 
         // Handle dash logic
         if (Input.GetKeyDown(KeyCode.LeftShift) && canDash) StartCoroutine(Dash(moveInput));
+        
+        isMoving = IsPlayerMoving();
+
+        if (!isMoving)
+        {
+            yield return new WaitForSeconds(2f);
+            
+        }
+    }
+
+    bool IsPlayerMoving()
+    {
+        return rb.velocity != Vector2.zero;
     }
 
     // Jump logic
@@ -85,8 +113,9 @@ public class PlayerMovement : MonoBehaviour
     // Dash logic
     IEnumerator Dash(float moveInput)
     {
-        isDashing = true;  
-        canDash = false; 
+        isDashing = true;
+        animator.SetBool("isDashing", true);
+        canDash = false;
 
         // Calculate the dash direction based on the input
         Vector2 dashDirection = new Vector2(moveInput != 0 ? moveInput : 
@@ -95,7 +124,8 @@ public class PlayerMovement : MonoBehaviour
 
         yield return new WaitForSeconds(dashDuration);       // Wait for the dash duration
 
-        isDashing = false;  
+        isDashing = false;
+        animator.SetBool("isDashing", false);
 
         yield return new WaitForSeconds(dashCooldown);       // Wait for dash cooldown
         canDash = true;  
@@ -113,12 +143,37 @@ public class PlayerMovement : MonoBehaviour
     {
         if (animator != null)
         {
-            animator.SetBool("isRunning", Mathf.Abs(moveInput) > 0.1f);
-            animator.SetBool("isIdle", Mathf.Abs(moveInput) <= 0.1f);
+            if (!isTouchingWall)
+            {
+                animator.SetBool("isRunning", Mathf.Abs(moveInput) > 0.1f);
+                animator.SetBool("isIdle", Mathf.Abs(moveInput) <= 0.1f);   
+            }
 
             // Flip the sprite based on movement direction
             if (moveInput < 0) spriteRenderer.flipX = true;
             else if (moveInput > 0) spriteRenderer.flipX = false;
+
+            // Jumping animation
+            if (!isGrounded && !isTouchingWall && rb.linearVelocity.y > 0)
+            {
+                animator.SetBool("isJumping", true);
+                animator.SetBool("isFalling", false);
+            }
+            // Falling animation
+            else if (!isGrounded && rb.linearVelocity.y < 0)
+            {
+                animator.SetBool("isJumping", false);
+                animator.SetBool("isFalling", true);
+            }
+            else if (isGrounded) // Landing
+            {
+                if (animator.GetBool("isFalling")) // Trigger landing if falling was active
+                {
+                    animator.SetTrigger("LandTrigger");
+                }
+                animator.SetBool("isJumping", false);
+                animator.SetBool("isFalling", false);
+            }
         }
     }
 
