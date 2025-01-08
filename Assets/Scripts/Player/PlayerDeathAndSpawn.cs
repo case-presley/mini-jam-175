@@ -1,5 +1,5 @@
 using UnityEngine;
-
+/*
 public class PlayerDeathAndSpawn : MonoBehaviour
 {
     public GameObject player;
@@ -26,7 +26,7 @@ public class PlayerDeathAndSpawn : MonoBehaviour
         }
     }
 
-    Spawn(string map)
+    public void Spawn(string map)
     {
         if (map == "MapOne")
         {
@@ -46,3 +46,4 @@ public class PlayerDeathAndSpawn : MonoBehaviour
         }
     }
 }
+*/

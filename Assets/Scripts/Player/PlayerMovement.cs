@@ -82,16 +82,11 @@ public class PlayerMovement : MonoBehaviour
         
         isMoving = IsPlayerMoving();
 
-        if (!isMoving)
-        {
-            yield return new WaitForSeconds(2f);
-            
-        }
     }
 
     bool IsPlayerMoving()
     {
-        return rb.velocity != Vector2.zero;
+        return rb.linearVelocity != Vector2.zero;
     }
 
     // Jump logic
