@@ -40,7 +40,7 @@ public class PlayerDeathAndSpawn : MonoBehaviour
         {
             Instantiate(player, mapThreeSpawn);
         }
-        else if (map == "MapFour")
+        else
         {
             Instantiate(player, mapFourSpawn);
         }
