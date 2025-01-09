@@ -15,5 +15,16 @@ public class CameraFollow : MonoBehaviour
             Vector3 smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed);
             transform.position = smoothedPosition;
         }
+        else
+        {
+            Debug.LogWarning("Camera target is missing.");
+        }
+    }
+
+    // Method to update the camera target
+    public void UpdateTarget(Transform newTarget)
+    {
+        target = newTarget;
+        Debug.Log("Camera target updated.");
     }
 }
