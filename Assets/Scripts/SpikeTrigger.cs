@@ -1,23 +1,29 @@
 using UnityEngine;
 
+/// <summary>
+/// Detects when the player collides with spikes and triggers the death sequence.
+/// </summary>
 public class SpikeTrigger : MonoBehaviour
 {
-	private void OnTriggerEnter2D(Collider2D collider)
-	{
-		if (collider.CompareTag("Player")) // Check if the colliding object is tagged as "Player"
-		{
-    		// Get the PlayerDeathAndSpawn component attached to the colliding GameObject
-    		PlayerDeathAndSpawn deathScript = collider.GetComponent<PlayerDeathAndSpawn>();
-    
-    		// Check if the component exists before calling the method
-    		if (deathScript != null)
-    		{
-        		deathScript.Death(); // Call the Death method on the specific instance
-    		}
-    		else
-   	 		{
-        		Debug.LogError("PlayerDeathAndSpawn component is missing on the player object.");
-    		}
-		}
-	}
+    /// <summary>
+    /// Called when a collider enters the trigger zone.
+    /// </summary>
+    /// <param name="collider">The collider that entered the trigger.</param>
+    private void OnTriggerEnter2D(Collider2D collider)
+    {
+        if (collider.CompareTag("Player"))
+        {
+            // Get the PlayerDeath component from the colliding object
+            PlayerDeath deathScript = collider.GetComponent<PlayerDeath>();
+
+            if (deathScript != null)
+            {
+                deathScript.Death();
+            }
+            else
+            {
+                Debug.LogError("PlayerDeath component is missing on the player object.");
+            }
+        }
+    }
 }
